@@ -1,0 +1,11 @@
+^\.git
+^\.github/
+^Makefile$
+^Makefile\.old$
+^MYMETA\.
+^blib/
+^pm_to_blib$
+\.tar\.gz$
+^WebService-
+^MANIFEST\.bak$
+^MANIFEST\.SKIP$

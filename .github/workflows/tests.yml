@@ -1,0 +1,33 @@
+name: tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        perl: ['5.16', '5.26', '5.36', '5.40']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: ${{ matrix.perl }}
+      - run: cpanm --notest --installdeps .
+      - run: perl Makefile.PL && make && make test
+  dist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shogo82148/actions-setup-perl@v1
+        with:
+          perl-version: '5.40'
+      - run: cpanm --notest --installdeps .
+      - run: cpanm --notest Test::Pod
+      - run: perl -MTest::Pod -e 'Test::Pod::all_pod_files_ok("lib")'
+      - run: perl Makefile.PL && make manifest && make distcheck && make dist && make disttest
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cpan-dist
+          path: '*.tar.gz'
